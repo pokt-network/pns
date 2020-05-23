@@ -6,6 +6,14 @@ export default function(
     valAccount,
     passphrase
 ) {
+
+const chainsJSON = chainsObj.map(function(chainID) {
+    return {
+        id: chainID,
+        url: "http://localhost:8545"
+    }
+})
+
     return `#! /bin/bash
 # Update the system
 apt-get update
@@ -54,7 +62,7 @@ echo '${JSON.stringify(genesisObj)}' > /root/.pocket/config/genesis.json
 echo '${JSON.stringify(configObj)}' > /root/.pocket/config/config.json
 
 # Create chains.json
-echo '${JSON.stringify(chainsObj)}' > /root/.pocket/config/chains.json
+echo '${JSON.stringify(chainsJSON)}' > /root/.pocket/config/chains.json
 
 # Define $HOME
 export HOME=/root
@@ -79,5 +87,13 @@ expect eof
 spawn pocket start
 expect eof
 ' >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
+
+# Stake the node in the network via itself
+expect -c '
+
+# Send stake operation
+spawn sh -c "pocket nodes stake ${valAccount.addressHex} 100000000 ${JSON.stringify(chainsObj)} http://${ipv4}:8081 ${genesisObj.chain_id}"
+expect eof
+' > /root/.pocket/stake-result.txt
 `
 }

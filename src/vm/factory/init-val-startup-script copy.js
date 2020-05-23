@@ -6,6 +6,14 @@ export default function(
     initValAccount,
     passphrase
 ) {
+
+const chainsJSON = chainsObj.map(function (chainID) {
+    return {
+        id: chainID,
+        url: "http://localhost:8545",
+    }
+})
+
     return `#! /bin/bash
 # Update the system
 apt-get update
@@ -54,7 +62,7 @@ echo '${JSON.stringify(genesisObj)}' > /root/.pocket/config/genesis.json
 echo '${JSON.stringify(configObj)}' > /root/.pocket/config/config.json
 
 # Create chains.json
-echo '${JSON.stringify(chainsObj)}' > /root/.pocket/config/chains.json
+echo '${JSON.stringify(chainsJSON)}' > /root/.pocket/config/chains.json
 
 # Define $HOME
 export HOME=/root

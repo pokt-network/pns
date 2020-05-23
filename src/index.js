@@ -6,15 +6,11 @@ async function start() {
     const pnsConfig = new PnsConfig()
 
     // 2.- Start VM creation sequence: Seeds, Initial Validators, Validators, Relayers
-    const seedsCreationOperation = VM.createSeedVMs(pnsConfig)
-    const initValsCreationOperation = undefined
-    const validatorsCreationOperation = undefined
-    const relayersCreationOperation = undefined
-
-    await Promise.all([
-        seedsCreationOperation,
-        initValsCreationOperation,
-        validatorsCreationOperation,
-        relayersCreationOperation,
-    ])
+    const seedsCreationOperation = await VM.createSeedVMs(pnsConfig)
+    const initValsCreationOperation = await VM.createInitValVMs(pnsConfig)
+    const validatorsCreationOperation = await VM.createValidatorVMs(pnsConfig)
+    const relayersCreationOperation = await VM.createRelayerVMs(pnsConfig)
 }
+
+// Start PNS
+start()
