@@ -1,11 +1,10 @@
 import { PnsTemplate } from "./template.js"
-import { getNetworkIps } from "ipv4-calculator"
+import * as IPV4Calculator from "ipv4-calculator"
+const getNetworkIps = IPV4Calculator.default.getNetworkIps
 import { createAccount, createValidatorAccount } from "../accounts/index.js"
 
 export class PnsConfig {
     constructor() {
-        // Set defaults
-
         // Template
         this.pnsTemplate = PnsTemplate
 
@@ -14,8 +13,6 @@ export class PnsConfig {
         this.initialValIps = []
         this.validatorIps = []
         this.relayerIps = []
-        // Initialize networking
-        this.initNetworking()
 
         // Account defaults
         this.seedAccounts = []
@@ -23,11 +20,17 @@ export class PnsConfig {
         this.validatorAccounts = []
         this.applicationAccounts = []
         this.accounts = []
-        // Initialize accounts
-        this.initAccounts()
 
         // Genesis
         this.genesis = PnsTemplate.pocketCore.genesisTemplate
+
+    }
+
+    async init() {
+        // Initialize networking
+        this.initNetworking()
+        // Initialize accounts
+        await this.initAccounts()
         // Initialize Genesis
         this.initGenesis()
     }
@@ -41,16 +44,16 @@ export class PnsConfig {
                 this.pnsTemplate.initialValidators.amount +
                 this.pnsTemplate.validators.amount +
                 this.pnsTemplate.relayers.amount >
-            networkIPs.length
+            networkIps.length
         ) {
             throw new Error("Not enough IP's provisioned")
         }
 
         // Set the IP's for each
-        this.seedIps = networkIPs.splice(0, this.pnsTemplate.seeds.amount)
-        this.initialValIps = networkIPs.splice(0, this.pnsTemplate.initialValidators.amount)
-        this.validatorIps = networkIPs.splice(0, this.pnsTemplate.validators.amount)
-        this.relayerIps = networkIPs.splice(0, this.pnsTemplate.relayers.amount)
+        this.seedIps = networkIps.splice(0, this.pnsTemplate.seeds.amount)
+        this.initialValIps = networkIps.splice(0, this.pnsTemplate.initialValidators.amount)
+        this.validatorIps = networkIps.splice(0, this.pnsTemplate.validators.amount)
+        this.relayerIps = networkIps.splice(0, this.pnsTemplate.relayers.amount)
 
         // Set the relayers dispatchers
         this.pnsTemplate.relayers.config.dispatchers = this.seedIps
@@ -61,7 +64,7 @@ export class PnsConfig {
                                                             })
     }
 
-    initAccounts() {
+    async initAccounts() {
         // Create seed accounts
         for (let index = 0; index < this.pnsTemplate.seeds.amount; index++) {
             const seedAccount = await createAccount("seed")
@@ -161,7 +164,7 @@ export class PnsConfig {
         // Generate genesis accounts
         for (let index = 0; index < this.accounts.length; index++) {
             const account = this.accounts[index]
-            const genesisAccount = createGenesisAccount(
+            const genesisAccount = this.createGenesisAccount(
                 account.addressHex,
                 account.publicKeyHex,
                 this.pnsTemplate.genesis.defaultAccountAmount
@@ -172,7 +175,7 @@ export class PnsConfig {
         // Generate genesis validators
         for (let index = 0; index < this.validatorAccounts.length; index++) {
             const validatorAccount = this.validatorAccounts[index]
-            const genesisValidator = createGenesisValidator(
+            const genesisValidator = this.createGenesisValidator(
                 validatorAccount.addressHex,
                 validatorAccount.publicKeyHex,
                 this.pnsTemplate.genesis.defaultValidatorStake,
@@ -185,7 +188,7 @@ export class PnsConfig {
         // Generate genesis applications
         for (let index = 0; index < this.applicationAccounts.length; index++) {
             const applicationAccount = this.applicationAccounts[index]
-            const genesisApplication = createGenesisApplication(
+            const genesisApplication = this.createGenesisApplication(
                 applicationAccount.addressHex,
                 applicationAccount.publicKeyHex,
                 this.pnsTemplate.initialValidators.chains

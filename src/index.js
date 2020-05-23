@@ -4,6 +4,7 @@ import * as VM from "./vm/index.js"
 async function start() {
     // 1.- Create and Load all the common configurations
     const pnsConfig = new PnsConfig()
+    await pnsConfig.init()
 
     // 2.- Start VM creation sequence: Seeds, Initial Validators, Validators, Relayers
     const seedsCreationOperation = await VM.createSeedVMs(pnsConfig)

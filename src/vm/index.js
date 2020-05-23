@@ -1,4 +1,4 @@
-import { chunk } from "./util/index.js"
+import { chunk } from "../util/index.js"
 import * as VMFactory from "./factory/index.js"
 
 async function createPocketCoreVMs(
