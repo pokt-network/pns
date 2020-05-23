@@ -29,7 +29,7 @@ export const PnsTemplate = {
             dispatchers: [],
             data_dir: "/root/prlts",
             log_level: "debug",
-            logs_to_console: false,
+            logs_to_console: true,
             faucet_pk: null,
             chain_id: "loadnet",
         },

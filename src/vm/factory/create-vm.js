@@ -38,9 +38,8 @@ export default async function (
     // Execute operation
     if (!dryRun) {
         const vm = zone.vm(vmName)
-        console.log(`Creating VM ${vmName}...`)
         const [createdVM, operation, apiResponse] = await vm.create(config)
-        console.log(`Polling operation ${operation.id}...`)
+        console.log(`Polling operation ${operation.id}`)
         return operation.promise()
     } else {
         return Promise.resolve()

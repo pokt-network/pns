@@ -4,7 +4,8 @@ export default function(
     configObj,
     chainsObj,
     valAccount,
-    passphrase
+    passphrase,
+    ipv4
 ) {
 
 const chainsJSON = chainsObj.map(function(chainID) {

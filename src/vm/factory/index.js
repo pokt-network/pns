@@ -12,7 +12,7 @@ export async function createSeedVM(
     configObj
 ) {
     // Setup params
-    const pocketCoreBranch = pnsConfig.pocketCore.branch
+    const pocketCoreBranch = pnsConfig.pnsTemplate.pocketCore.branch
     const genesis = pnsConfig.genesis
     const passphrase = "seedpassphrase"
 
@@ -43,7 +43,7 @@ export async function createInitValVM(
     configObj
 ) {
     // Setup params
-    const pocketCoreBranch = pnsConfig.pocketCore.branch
+    const pocketCoreBranch = pnsConfig.pnsTemplate.pocketCore.branch
     const genesis = pnsConfig.genesis
     const passphrase = "initvalpassphrase"
     const chains = pnsConfig.pnsTemplate.initialValidators.chains
@@ -76,7 +76,7 @@ export async function createValVM(
     configObj
 ) {
     // Setup params
-    const pocketCoreBranch = pnsConfig.pocketCore.branch
+    const pocketCoreBranch = pnsConfig.pnsTemplate.pocketCore.branch
     const genesis = pnsConfig.genesis
     const passphrase = "valpassphrase"
     const chains = pnsConfig.pnsTemplate.initialValidators.chains
@@ -87,7 +87,8 @@ export async function createValVM(
         configObj,
         chains,
         valAccount,
-        passphrase
+        passphrase,
+        ipv4
     )
     return createVM(
         pnsConfig.dryRun,

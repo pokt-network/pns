@@ -15,7 +15,7 @@ async function createPocketCoreVMs(
         const accountsChunk = accountsChunks[chunkIndex]
         const ipsChunk = ipsChunks[chunkIndex]
         const operations = []
-        for (let index = 0; index < accountsChunk; index++) {
+        for (let index = 0; index < accountsChunk.length; index++) {
             const account = accountsChunk[index]
             // Creating Node with account
             console.log(
@@ -24,11 +24,12 @@ async function createPocketCoreVMs(
 
             // Create moniker
             const moniker = `${monikerPrefix}-${chunkIndex}-${index}`
-            console.log(`VM moniker: ${moniker}`)
 
             // Get an IP
             const ipv4 = ipsChunk[index]
-            console.log(`Pocket Core Node IP: ${ipv4}`)
+
+            // Log operation
+            console.log(`Pocket Core Node: ${moniker} with IPv4: ${ipv4}`)
 
             // Display Pocket Core config
             const configObj = pnsConfig.createConfig(moniker, true, ipv4)
@@ -64,8 +65,8 @@ export async function createSeedVMs(pnsConfig) {
 }
 
 export async function createInitValVMs(pnsConfig) {
-    const initValAccounts = pnsConfig.initValAccounts
-    const initValIps = pnsConfig.initValIps
+    const initValAccounts = pnsConfig.initialValidatorAccounts
+    const initValIps = pnsConfig.initialValIps
     await createPocketCoreVMs(
         pnsConfig,
         initValAccounts,
@@ -77,8 +78,8 @@ export async function createInitValVMs(pnsConfig) {
 }
 
 export async function createValidatorVMs(pnsConfig) {
-    const valAccounts = pnsConfig.initValAccounts
-    const validatorIps = pnsConfig.initValIps
+    const valAccounts = pnsConfig.validatorAccounts
+    const validatorIps = pnsConfig.validatorIps
     await createPocketCoreVMs(
         pnsConfig,
         valAccounts,
