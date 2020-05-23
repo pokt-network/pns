@@ -1,10 +1,23 @@
-export default function createStartupScript(genesisObj, configObj, chainsObj, seedAccount, passphrase) {
+export default function(
+    pocketCoreBranch,
+    genesisObj,
+    configObj,
+    chainsObj,
+    initValAccount,
+    passphrase
+) {
     return `#! /bin/bash
 # Update the system
 apt-get update
 
 # Install dependencies
 apt-get --assume-yes install expect build-essential curl file git libleveldb-dev gcc wget golang-go
+
+# Install Ganache
+sudo npm install -g ganache-cli
+
+# Start ganache
+ganache-cli > /root/ganache-logs.txt 2>&1 &
 
 # Install go
 wget -q -O - https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh \
@@ -22,7 +35,7 @@ source /root/.bashrc
 # Build from source
 git clone https://github.com/pokt-network/pocket-core.git /go/src/github.com/pokt-network/pocket-core
 cd /go/src/github.com/pokt-network/pocket-core
-git checkout tags/RC-0.3.1 -b v0.3.1
+git checkout ${pocketCoreBranch} -b loadtest
 go build -tags cleveldb -o /usr/local/bin/pocket ./app/cmd/pocket_core/main.go
 
 # Apply updates
@@ -47,25 +60,24 @@ echo '${JSON.stringify(chainsObj)}' > /root/.pocket/config/chains.json
 export HOME=/root
 echo 'export HOME=/root' >> /root/.bashrc
 
-# Switch to expect
-expect << 'EOS'
+# Run pocket core via expect
+expect -c '
 
 # Import account
-spawn pocket accounts import-raw ${seedAccount.privateKeyHex}
+spawn pocket accounts import-raw ${initValAccount.privateKeyHex}
 sleep 1
 send -- "${passphrase}\\n"
 expect eof
 
 # Set validator
-spawn sh -c "pocket accounts set-validator \`pocket accounts list | cut -d' ' -f2- \`"
+spawn sh -c "pocket accounts set-validator \`pocket accounts list | cut -d\\" \\" -f2- \`"
 sleep 1
 send -- "${passphrase}\\n"
 expect eof
 
 # Start pocket core
-spawn pocket start > /root/.pocket/logs.txt 2>&1 &
+spawn pocket start
 expect eof
-
-# Finish expect script
-EOS`
+' >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
+`
 }
