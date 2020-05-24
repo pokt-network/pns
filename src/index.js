@@ -14,15 +14,26 @@ async function start() {
     const genesisURL = PromptSync.default()("Input genesis url: ")
     pnsConfig.setGenesisURL(genesisURL)
     console.log("Genesis URL: " + genesisURL)
-        
+
     // 4.- Start VM creation sequence: Seeds, Initial Validators, Validators, Relayers
+
+    // Create seeds and wait
     await VM.createSeedVMs(pnsConfig)
+    // Await before the next execution
+    await new Promise((r) => setTimeout(r, 300000))
+
+    // Create initial validators and wait
     await VM.createInitValVMs(pnsConfig)
+    // Await before the next execution
+    await new Promise((r) => setTimeout(r, 300000))
+
+    // Create validators and wait
     await VM.createValidatorVMs(pnsConfig)
-    // Wait blockTime to elapse before starting the relayers
-    setTimeout(async function () {
-        await VM.createRelayerVMs(pnsConfig)
-    }, pnsConfig.pnsTemplate.pocketCore.blockTime * 60000)
+    // Await before the next execution
+    await new Promise((r) => setTimeout(r, 300000))
+
+    // Create relayers
+    await VM.createRelayerVMs(pnsConfig)
 }
 
 // Start PNS

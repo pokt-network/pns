@@ -3,7 +3,7 @@ export const PnsTemplate = {
     dryRun: false,
     // VM's configurations
     seeds: {
-        amount: 20,
+        amount: 9,
         machineType: "e2-standard-2",
     },
     initialValidators: {
@@ -12,7 +12,7 @@ export const PnsTemplate = {
         chains: ["0001"],
     },
     validators: {
-        amount: 4950,
+        amount: 515,
         machineType: "e2-standard-2",
     },
     relayers: {
@@ -403,10 +403,10 @@ export const PnsTemplate = {
                     TimeoutPrevoteDelta: 500000000,
                     TimeoutPrecommit: 1000000000,
                     TimeoutPrecommitDelta: 500000000,
-                    TimeoutCommit: 60000000000,
+                    TimeoutCommit: 900000000000,
                     SkipTimeoutCommit: false,
                     CreateEmptyBlocks: true,
-                    CreateEmptyBlocksInterval: 60000000000,
+                    CreateEmptyBlocksInterval: 900000000000,
                     PeerGossipSleepDuration: 100000000,
                     PeerQueryMaj23SleepDuration: 2000000000,
                 },

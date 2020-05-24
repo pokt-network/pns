@@ -49,6 +49,8 @@ async function createPocketCoreVMs(
         // Await chunk of operations  to complete
         const operationResults = await Promise.all(operations)
         console.log(operationResults)
+        // Await before the next execution
+        await new Promise((r) => setTimeout(r, 300000))
     }
 }
 
