@@ -82,10 +82,9 @@ spawn sh -c "pocket accounts set-validator \`pocket accounts list | cut -d\\" \\
 sleep 1
 send -- "${passphrase}\\n"
 expect eof
+'
 
 # Start pocket core
-spawn pocket start
-expect eof
-' >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
+pocket start >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
 `
 }
