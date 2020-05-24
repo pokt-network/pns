@@ -54,7 +54,7 @@ export HOME=/root
 echo 'export HOME=/root' >> /root/.bashrc
 
 # Run pocket core via expect
-expect -c '
+expect -d -c '
 
 # Import account
 spawn pocket accounts import-raw ${seedAccount.privateKeyHex}
@@ -67,10 +67,9 @@ spawn sh -c "pocket accounts set-validator \`pocket accounts list | cut -d\\" \\
 sleep 1
 send -- "${passphrase}\\n"
 expect eof
+'
 
 # Start pocket core
-spawn pocket start
-expect eof
-' >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
+pocket start >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
 `
 }

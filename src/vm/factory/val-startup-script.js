@@ -83,14 +83,16 @@ spawn sh -c "pocket accounts set-validator \`pocket accounts list | cut -d\\" \\
 sleep 1
 send -- "${passphrase}\\n"
 expect eof
+'
 
 # Start pocket core
-spawn pocket start
-expect eof
-' >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
+pocket start >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
 
 # Stake the node in the network via itself
 expect -c '
+
+# Sleep before sending the stake transaction
+sleep 60
 
 # Send stake operation
 spawn sh -c "pocket nodes stake ${valAccount.addressHex} 100000000 ${JSON.stringify(chainsObj)} http://${ipv4}:8081 ${genesisObj.chain_id}"

@@ -16,7 +16,7 @@ export const PnsTemplate = {
         machineType: "e2-standard-2"
     },
     relayers: {
-        amount: 1,
+        amount: 0,
         testType: "transaction",
         processes: 1,
         branch: "origin/issue-#22",
