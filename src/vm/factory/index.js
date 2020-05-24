@@ -13,13 +13,13 @@ export async function createSeedVM(
 ) {
     // Setup params
     const pocketCoreBranch = pnsConfig.pnsTemplate.pocketCore.branch
-    const genesis = pnsConfig.genesis
+    const genesisURL = pnsConfig.genesisURL
     const passphrase = "seedpassphrase"
     const blockTime = pnsConfig.pnsTemplate.pocketCore.blockTime
 
     const startupScript = createSeedStartupScript(
         pocketCoreBranch,
-        genesis,
+        genesisURL,
         configObj,
         seedAccount,
         passphrase,
@@ -46,14 +46,14 @@ export async function createInitValVM(
 ) {
     // Setup params
     const pocketCoreBranch = pnsConfig.pnsTemplate.pocketCore.branch
-    const genesis = pnsConfig.genesis
+    const genesisURL = pnsConfig.genesisURL
     const passphrase = "initvalpassphrase"
     const chains = pnsConfig.pnsTemplate.initialValidators.chains
     const blockTime = pnsConfig.pnsTemplate.pocketCore.blockTime
 
     const startupScript = createInitialValidatorStartupScript(
         pocketCoreBranch,
-        genesis,
+        genesisURL,
         configObj,
         chains,
         initValAccount,
@@ -81,14 +81,14 @@ export async function createValVM(
 ) {
     // Setup params
     const pocketCoreBranch = pnsConfig.pnsTemplate.pocketCore.branch
-    const genesis = pnsConfig.genesis
+    const genesisURL = pnsConfig.genesisURL
     const passphrase = "valpassphrase"
     const chains = pnsConfig.pnsTemplate.initialValidators.chains
     const blockTime = pnsConfig.pnsTemplate.pocketCore.blockTime
 
     const startupScript = createValidatorStartupScript(
         pocketCoreBranch,
-        genesis,
+        genesisURL,
         configObj,
         chains,
         valAccount,

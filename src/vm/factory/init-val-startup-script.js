@@ -1,6 +1,6 @@
 export default function(
     pocketCoreBranch,
-    genesisObj,
+    genesisURL,
     configObj,
     chainsObj,
     initValAccount,
@@ -56,8 +56,11 @@ mkdir /root/.pocket
 # Create config dir
 mkdir /root/.pocket/config
 
+# Move to config dir
+cd /root/.pocket/config
+
 # Create genesis.json
-echo '${JSON.stringify(genesisObj)}' > /root/.pocket/config/genesis.json
+wget ${genesisURL}
 
 # Create config.json
 echo '${JSON.stringify(configObj)}' > /root/.pocket/config/config.json

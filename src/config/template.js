@@ -3,16 +3,16 @@ export const PnsTemplate = {
     dryRun: false,
     // VM's configurations
     seeds: {
-        amount: 2,
+        amount: 20,
         machineType: "e2-standard-2",
     },
     initialValidators: {
-        amount: 5,
+        amount: 50,
         machineType: "e2-standard-2",
         chains: ["0001"],
     },
     validators: {
-        amount: 5,
+        amount: 4950,
         machineType: "e2-standard-2",
     },
     relayers: {
@@ -25,7 +25,7 @@ export const PnsTemplate = {
             session_block_frequency: 4,
             block_time: 900000,
             relay_timeout: 0,
-            parallel_relays: 5,
+            parallel_relays: 20,
             dispatchers: [],
             data_dir: "/root/prlts",
             log_level: "debug",
@@ -43,7 +43,7 @@ export const PnsTemplate = {
     projectID: "validator-load-test",
     // Pocket Core configurations
     pocketCore: {
-        blockTime: 1,
+        blockTime: 15,
         branch: "origin/cli-fix",
         genesisTemplate: {
             genesis_time: "2020-05-22T16:04:03.57251Z",

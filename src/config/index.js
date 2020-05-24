@@ -58,7 +58,6 @@ export class PnsConfig {
         // Set the relayers dispatchers
         this.pnsTemplate.relayers.config.dispatchers = this.seedIps
                                                             .concat(this.initialValIps)
-                                                            .concat(this.validatorIps)
                                                             .map(function(seedIp){
                                                                 return `http://${seedIp}:8081`
                                                             })
@@ -245,5 +244,9 @@ export class PnsConfig {
             result.push(`${account.addressHex}@${ip}:26656`)
         }
         return result.join(",")
+    }
+
+    setGenesisURL(genesisURL) {
+        this.genesisURL = genesisURL
     }
 }

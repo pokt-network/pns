@@ -1,6 +1,6 @@
 export default function(
     pocketCoreBranch,
-    genesisObj,
+    genesisURL,
     configObj,
     chainsObj,
     valAccount,
@@ -57,8 +57,11 @@ mkdir /root/.pocket
 # Create config dir
 mkdir /root/.pocket/config
 
+# Move to config dir
+cd /root/.pocket/config
+
 # Create genesis.json
-echo '${JSON.stringify(genesisObj)}' > /root/.pocket/config/genesis.json
+wget ${genesisURL}
 
 # Create config.json
 echo '${JSON.stringify(configObj)}' > /root/.pocket/config/config.json
@@ -96,7 +99,9 @@ expect -c '
 sleep 60
 
 # Send stake operation
-spawn pocket nodes stake ${valAccount.addressHex} 100000000 0001 http://${ipv4}:8081 ${genesisObj.chain_id}
+spawn pocket nodes stake ${
+        valAccount.addressHex
+    } 100000000 0001 http://${ipv4}:8081 ${genesisObj.chain_id}
 sleep 5
 send -- "${passphrase}\\n"
 expect eof
