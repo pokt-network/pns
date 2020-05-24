@@ -99,9 +99,7 @@ expect -c '
 sleep 60
 
 # Send stake operation
-spawn pocket nodes stake ${
-        valAccount.addressHex
-    } 100000000 0001 http://${ipv4}:8081 ${genesisObj.chain_id}
+spawn pocket nodes stake ${valAccount.addressHex} 100000000 0001 http://${ipv4}:8081 loadnet
 sleep 5
 send -- "${passphrase}\\n"
 expect eof
