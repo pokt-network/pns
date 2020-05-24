@@ -173,8 +173,8 @@ export class PnsConfig {
         }
 
         // Generate genesis validators
-        for (let index = 0; index < this.validatorAccounts.length; index++) {
-            const validatorAccount = this.validatorAccounts[index]
+        for (let index = 0; index < this.initialValidatorAccounts.length; index++) {
+            const validatorAccount = this.initialValidatorAccounts[index]
             const genesisValidator = this.createGenesisValidator(
                 validatorAccount.addressHex,
                 validatorAccount.publicKeyHex,
