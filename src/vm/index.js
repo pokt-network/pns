@@ -5,6 +5,7 @@ async function createPocketCoreVMs(
     pnsConfig,
     accounts,
     ips,
+    seedMode,
     monikerPrefix,
     createVMFunc
 ) {
@@ -32,7 +33,7 @@ async function createPocketCoreVMs(
             console.log(`Pocket Core Node: ${moniker} with IPv4: ${ipv4}`)
 
             // Display Pocket Core config
-            const configObj = pnsConfig.createConfig(moniker, true, ipv4)
+            const configObj = pnsConfig.createConfig(moniker, seedMode, ipv4)
 
             // Execute VM creation operation
             const operation = createVMFunc(
@@ -58,6 +59,7 @@ export async function createSeedVMs(pnsConfig) {
         pnsConfig,
         seedAccounts,
         seedIps,
+        true,
         "seed",
         VMFactory.createSeedVM
     )
@@ -71,6 +73,7 @@ export async function createInitValVMs(pnsConfig) {
         pnsConfig,
         initValAccounts,
         initValIps,
+        false,
         "init-val",
         VMFactory.createInitValVM
     )
@@ -84,6 +87,7 @@ export async function createValidatorVMs(pnsConfig) {
         pnsConfig,
         valAccounts,
         validatorIps,
+        false,
         "val",
         VMFactory.createValVM
     )

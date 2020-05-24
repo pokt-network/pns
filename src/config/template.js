@@ -43,7 +43,7 @@ export const PnsTemplate = {
     projectID: "validator-load-test",
     // Pocket Core configurations
     pocketCore: {
-        blockTime: 15,
+        blockTime: 1,
         branch: "origin/staging",
         genesisTemplate: {
             genesis_time: "2020-05-07T00:00:00.000000Z",
@@ -360,7 +360,7 @@ export const PnsTemplate = {
                     ExternalAddress: "",
                     Seeds: "",
                     PersistentPeers: "",
-                    UPNP: false,
+                    UPNP: true,
                     AddrBook: "config/addrbook.json",
                     AddrBookStrict: false,
                     MaxNumInboundPeers: 250,
@@ -372,7 +372,7 @@ export const PnsTemplate = {
                     PexReactor: true,
                     SeedMode: false,
                     PrivatePeerIDs: "",
-                    AllowDuplicateIP: false,
+                    AllowDuplicateIP: true,
                     HandshakeTimeout: 20000000000,
                     DialTimeout: 3000000000,
                     TestDialFail: false,
