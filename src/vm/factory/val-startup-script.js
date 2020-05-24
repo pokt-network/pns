@@ -5,7 +5,8 @@ export default function(
     chainsObj,
     valAccount,
     passphrase,
-    ipv4
+    ipv4,
+    blockTime
 ) {
 
 const chainsJSON = chainsObj.map(function(chainID) {
@@ -86,7 +87,7 @@ expect eof
 '
 
 # Start pocket core
-pocket start >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
+pocket start --blockTime ${blockTime} >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
 
 # Stake the node in the network via itself
 expect -c '
@@ -96,7 +97,7 @@ sleep 60
 
 # Send stake operation
 spawn sh -c "pocket nodes stake ${valAccount.addressHex} 100000000 ${JSON.stringify(chainsObj)} http://${ipv4}:8081 ${genesisObj.chain_id}"
-sleep 1
+sleep 5
 send -- "${passphrase}\\n"
 expect eof
 ' > /root/.pocket/stake-result.txt

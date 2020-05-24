@@ -3,7 +3,8 @@ export default function(
     genesisObj,
     configObj,
     seedAccount,
-    passphrase
+    passphrase,
+    blockTime
 ) {
     return `#! /bin/bash
 # Update the system
@@ -54,7 +55,7 @@ export HOME=/root
 echo 'export HOME=/root' >> /root/.bashrc
 
 # Run pocket core via expect
-expect -d -c '
+expect -c '
 
 # Import account
 spawn pocket accounts import-raw ${seedAccount.privateKeyHex}
@@ -70,6 +71,6 @@ expect eof
 '
 
 # Start pocket core
-pocket start >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
+pocket start --blockTime ${blockTime} >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
 `
 }

@@ -4,7 +4,8 @@ export default function(
     configObj,
     chainsObj,
     initValAccount,
-    passphrase
+    passphrase,
+    blockTime
 ) {
 
 const chainsJSON = chainsObj.map(function (chainID) {
@@ -85,6 +86,6 @@ expect eof
 '
 
 # Start pocket core
-pocket start >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
+pocket start --blockTime ${blockTime} >> /root/.pocket/logs.txt 2>> /root/.pocket/error-logs.txt &
 `
 }

@@ -43,6 +43,7 @@ export const PnsTemplate = {
     projectID: "validator-load-test",
     // Pocket Core configurations
     pocketCore: {
+        blockTime: 15,
         branch: "origin/staging",
         genesisTemplate: {
             genesis_time: "2020-05-07T00:00:00.000000Z",
