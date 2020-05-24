@@ -96,10 +96,10 @@ expect -c '
 sleep 60
 
 # Send stake operation
-spawn sh -c "pocket nodes stake ${valAccount.addressHex} 100000000 ${JSON.stringify(chainsObj)} http://${ipv4}:8081 ${genesisObj.chain_id}"
+spawn pocket nodes stake ${valAccount.addressHex} 100000000 0001 http://${ipv4}:8081 ${genesisObj.chain_id}
 sleep 5
 send -- "${passphrase}\\n"
 expect eof
-' > /root/.pocket/stake-result.txt
+' > /root/.pocket/stake-result.txt 2>&1
 `
 }

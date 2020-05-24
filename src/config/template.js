@@ -13,10 +13,10 @@ export const PnsTemplate = {
     },
     validators: {
         amount: 5,
-        machineType: "e2-standard-2"
+        machineType: "e2-standard-2",
     },
     relayers: {
-        amount: 0,
+        amount: 1,
         testType: "transaction",
         processes: 1,
         branch: "origin/issue-#22",
@@ -44,9 +44,9 @@ export const PnsTemplate = {
     // Pocket Core configurations
     pocketCore: {
         blockTime: 1,
-        branch: "origin/staging",
+        branch: "origin/cli-fix",
         genesisTemplate: {
-            genesis_time: "2020-05-07T00:00:00.000000Z",
+            genesis_time: "2020-05-22T16:04:03.57251Z",
             chain_id: "loadnet",
             consensus_params: {
                 block: {
@@ -63,235 +63,18 @@ export const PnsTemplate = {
             },
             app_hash: "",
             app_state: {
-                supply: {
-                    supply: [],
-                },
-                pocketcore: {
-                    params: {
-                        session_node_count: "5",
-                        proof_waiting_period: "3",
-                        supported_blockchains: ["0001"],
-                        claim_expiration: "100",
-                    },
-                    proofs: null,
-                    claims: null,
-                },
-                application: {
-                    params: {
-                        unstaking_time: "60000000000",
-                        max_applications: "18446744073709551615",
-                        app_stake_minimum: "1000000",
-                        base_relays_per_pokt: "100",
-                        stability_adjustment: "0",
-                        participation_rate_on: false,
-                    },
-                    applications: [],
-                    exported: false,
-                },
-                gov: {
-                    params: {
-                        acl: [
-                            {
-                                acl_key: "auth/MaxMemoCharacters",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "auth/TxSigLimit",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "gov/daoOwner",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "gov/acl",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/StakeDenom",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pocketcore/SupportedBlockchains",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/DowntimeJailDuration",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/SlashFractionDoubleSign",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/SlashFractionDowntime",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "application/ApplicationStakeMinimum",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pocketcore/ClaimExpiration",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pocketcore/SessionNodeCount",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key:
-                                    "pocketcore/ReplayAttackBurnMultiplier",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/MaxValidators",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/ProposerPercentage",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "application/StabilityAdjustment",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "application/AppUnstakingTime",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "application/ParticipationRateOn",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/MaxEvidenceAge",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/MinSignedPerWindow",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/StakeMinimum",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/UnstakingTime",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "application/BaseRelaysPerPOKT",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pocketcore/ClaimSubmissionWindow",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/DAOAllocation",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/SignedBlocksWindow",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/BlocksPerSession",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "application/MaxApplications",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "gov/upgrade",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/MaximumChains",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "application/MaximumChains",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/MaxJailedBlocks",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pos/RelaysToTokensMultiplier",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                            {
-                                acl_key: "pocketcore/MinimumNumberOfProofs",
-                                address:
-                                    "3b74022ff2f29282f440bf21a77919234449a044",
-                            },
-                        ],
-                        dao_owner: "3b74022ff2f29282f440bf21a77919234449a044",
-                        upgrade: {
-                            Height: "0",
-                            Version: "0",
-                        },
-                    },
-                    DAO_Tokens: "0",
-                },
-                auth: {
-                    params: {
-                        max_memo_characters: "256",
-                        tx_sig_limit: "7",
-                        tx_size_cost_per_byte: "10",
-                    },
-                    accounts: [],
-                },
-                bank: {
-                    send_enabled: true,
-                },
-                params: null,
                 pos: {
                     params: {
-                        unstaking_time: "60000000000",
+                        relays_to_tokens_multiplier: "1000",
+                        unstaking_time: "1814400000000000",
                         max_validators: "5000",
                         stake_denom: "upokt",
                         stake_minimum: "1000000",
-                        session_block_frequency: "4",
+                        session_block_frequency: "25",
                         dao_allocation: "10",
                         proposer_allocation: "1",
+                        maximum_chains: "15",
+                        max_jailed_blocks: "1000",
                         max_evidence_age: "120000000000",
                         signed_blocks_window: "100",
                         min_signed_per_window: "0.500000000000000000",
@@ -303,12 +86,225 @@ export const PnsTemplate = {
                     prevState_validator_powers: null,
                     validators: [],
                     exported: false,
-                    dao: {
-                        Tokens: "0",
-                    },
                     signing_infos: {},
                     missed_blocks: {},
                     previous_proposer: "",
+                },
+                pocketcore: {
+                    params: {
+                        session_node_count: "5",
+                        proof_waiting_period: "3",
+                        supported_blockchains: ["0001"],
+                        claim_expiration: "100",
+                        replay_attack_burn_multiplier: "3",
+                        minimum_number_of_proofs: "5",
+                    },
+                    receipts: null,
+                    claims: null,
+                },
+                application: {
+                    params: {
+                        unstaking_time: "1814400000000000",
+                        max_applications: "9223372036854775807",
+                        app_stake_minimum: "1000000",
+                        base_relays_per_pokt: "100",
+                        stability_adjustment: "0",
+                        participation_rate_on: false,
+                        maximum_chains: "15",
+                    },
+                    applications: [],
+                    exported: false,
+                },
+                auth: {
+                    params: {
+                        max_memo_characters: "256",
+                        tx_sig_limit: "7",
+                    },
+                    accounts: [],
+                    supply: [],
+                },
+                gov: {
+                    params: {
+                        acl: [
+                            {
+                                acl_key: "auth/MaxMemoCharacters",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "auth/TxSigLimit",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "gov/daoOwner",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "gov/acl",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/StakeDenom",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pocketcore/SupportedBlockchains",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pocketcore/MinimumNumberOfProofs",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/DowntimeJailDuration",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/SlashFractionDoubleSign",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/SlashFractionDowntime",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "application/ApplicationStakeMinimum",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pocketcore/ClaimExpiration",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pocketcore/SessionNodeCount",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key:
+                                    "pocketcore/ReplayAttackBurnMultiplier",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/MaxValidators",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/ProposerPercentage",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "application/StabilityAdjustment",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "application/MaximumChains",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "application/AppUnstakingTime",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "application/ParticipationRateOn",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/MaxEvidenceAge",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/MinSignedPerWindow",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/StakeMinimum",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/UnstakingTime",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "application/BaseRelaysPerPOKT",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pocketcore/ClaimSubmissionWindow",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/DAOAllocation",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/MaximumChains",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/MaxJailedBlocks",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/SignedBlocksWindow",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/BlocksPerSession",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "application/MaxApplications",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "pos/RelaysToTokensMultiplier",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                            {
+                                acl_key: "gov/upgrade",
+                                address:
+                                    "fb4050225b140ec261aa0de3931b146fd0705d54",
+                            },
+                        ],
+                        dao_owner: "fb4050225b140ec261aa0de3931b146fd0705d54",
+                        upgrade: {
+                            Height: "0",
+                            Version: "0",
+                        },
+                    },
+                    DAO_Tokens: "0",
                 },
             },
         },

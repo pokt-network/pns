@@ -7,10 +7,14 @@ async function start() {
     await pnsConfig.init()
 
     // 2.- Start VM creation sequence: Seeds, Initial Validators, Validators, Relayers
-    const seedsCreationOperation = await VM.createSeedVMs(pnsConfig)
-    const initValsCreationOperation = await VM.createInitValVMs(pnsConfig)
-    const validatorsCreationOperation = await VM.createValidatorVMs(pnsConfig)
-    const relayersCreationOperation = await VM.createRelayerVMs(pnsConfig)
+    await VM.createSeedVMs(pnsConfig)
+    await VM.createInitValVMs(pnsConfig)
+    await VM.createValidatorVMs(pnsConfig)
+    // Wait blockTime to elapse before starting the relayers
+    setTimeout(async function () {
+        await VM.createRelayerVMs(pnsConfig)
+    },
+    pnsConfig.pnsTemplate.pocketCore.blockTime * 60000)
 }
 
 // Start PNS

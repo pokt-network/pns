@@ -26,7 +26,7 @@ export async function createSeedVM(
         blockTime
     )
     return createVM(
-        pnsConfig.dryRun,
+        pnsConfig.pnsTemplate.dryRun,
         pnsConfig.pnsTemplate.zone,
         pnsConfig.pnsTemplate.seeds.machineType,
         pnsConfig.pnsTemplate.projectID,
@@ -61,7 +61,7 @@ export async function createInitValVM(
         blockTime
     )
     return createVM(
-        pnsConfig.dryRun,
+        pnsConfig.pnsTemplate.dryRun,
         pnsConfig.pnsTemplate.zone,
         pnsConfig.pnsTemplate.seeds.machineType,
         pnsConfig.pnsTemplate.projectID,
@@ -96,8 +96,9 @@ export async function createValVM(
         ipv4,
         blockTime
     )
+    console.log(startupScript)
     return createVM(
-        pnsConfig.dryRun,
+        pnsConfig.pnsTemplate.dryRun,
         pnsConfig.pnsTemplate.zone,
         pnsConfig.pnsTemplate.seeds.machineType,
         pnsConfig.pnsTemplate.projectID,
@@ -125,7 +126,7 @@ export async function createRelayerVM(
         testType
     )
     return createVM(
-        pnsConfig.dryRun,
+        pnsConfig.pnsTemplate.dryRun,
         pnsConfig.pnsTemplate.zone,
         pnsConfig.pnsTemplate.seeds.machineType,
         pnsConfig.pnsTemplate.projectID,
