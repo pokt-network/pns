@@ -319,7 +319,7 @@ export const PnsTemplate = {
                 FastSyncMode: true,
                 DBBackend: "goleveldb",
                 DBPath: "data",
-                LogLevel: "*:debug, *:info, *:error",
+                LogLevel: "*:error",
                 LogFormat: "plain",
                 Genesis: "config/genesis.json",
                 PrivValidatorKey: "priv_val_key.json",
