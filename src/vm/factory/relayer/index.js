@@ -5,9 +5,7 @@ export default function (prltsBranch, prltsConfigObj, processCount, testType) {
 
     var foreverStarts = ""
     for (let index = 0; index < processCount; index++) {
-        foreverStarts = foreverStarts.concat(
-            `forever start src/index.js ${testType}\n`
-        )
+        foreverStarts = foreverStarts.concat(`forever start src/index.js ${testType}\n`)
     }
 
     return `#! /bin/bash

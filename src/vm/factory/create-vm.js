@@ -1,6 +1,6 @@
 import Compute from "@google-cloud/compute"
 
-export default async function (
+export default async function createVM(
     dryRun,
     zoneName,
     machineType,
@@ -10,38 +10,45 @@ export default async function (
     networkIP,
     startupScript
 ) {
-    // GCP Clients
-    const compute = new Compute({ projectId: projectID })
-    const zone = compute.zone(zoneName)
+    try {
+        // GCP Clients
+        const compute = new Compute({ projectId: projectID })
+        const zone = compute.zone(zoneName)
 
-    // VM config
-    const config = {
-        machineType: machineType,
-        os: "ubuntu",
-        networkInterfaces: [
-            {
-                network: `projects/${projectID}/global/networks/${networkName}`,
-                networkIP: networkIP,
-                accessConfigs: [{ networkTier: "PREMIUM" }],
-            },
-        ],
-        metadata: {
-            items: [
+        // VM config
+        const config = {
+            machineType: machineType,
+            os: "ubuntu",
+            networkInterfaces: [
                 {
-                    key: "startup-script",
-                    value: startupScript,
+                    network: `projects/${projectID}/global/networks/${networkName}`,
+                    networkIP: networkIP,
+                    accessConfigs: [{ networkTier: "PREMIUM" }],
                 },
             ],
-        },
-    }
+            metadata: {
+                items: [
+                    {
+                        key: "startup-script",
+                        value: startupScript,
+                    },
+                    {
+                        key: "enable-oslogin",
+                        value: "TRUE",
+                    },
+                ],
+            },
+        }
 
-    // Execute operation
-    if (!dryRun) {
-        const vm = zone.vm(vmName)
-        const [createdVM, operation, apiResponse] = await vm.create(config)
-        console.log(`Polling operation ${operation.id}`)
-        return operation.promise()
-    } else {
-        return Promise.resolve()
+        // Execute operation
+        if (!dryRun) {
+            const vm = zone.vm(vmName)
+            return vm.create(config)
+        } else {
+            return Promise.resolve()
+        }
+    } catch (error) {
+        console.log(error)
+        return createVM(dryRun, zoneName, machineType, projectID, vmName, networkName, networkIP, startupScript)
     }
 }

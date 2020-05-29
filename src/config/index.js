@@ -2,6 +2,8 @@ import { PnsTemplate } from "./template.js"
 import * as IPV4Calculator from "ipv4-calculator"
 const getNetworkIps = IPV4Calculator.default.getNetworkIps
 import { createAccount, createValidatorAccount } from "../accounts/index.js"
+import * as shortid from "shortid"
+import * as GCPStorage from "@google-cloud/storage"
 
 export class PnsConfig {
     constructor() {
@@ -15,15 +17,18 @@ export class PnsConfig {
         this.relayerIps = []
 
         // Account defaults
-        this.seedAccounts = []
-        this.initialValidatorAccounts = []
-        this.validatorAccounts = []
+        this.seedAccounts = {}
+        this.initialValidatorAccounts = {}
+        this.validatorAccounts = {}
+        this.allInitialValidatorAccounts = []
         this.applicationAccounts = []
         this.accounts = []
 
         // Genesis
         this.genesis = PnsTemplate.pocketCore.genesisTemplate
-
+        
+        // Storage bucket
+        this.storageBucket = shortid.default.generate().toLowerCase()
     }
 
     async init() {
@@ -56,47 +61,64 @@ export class PnsConfig {
         this.relayerIps = networkIps.splice(0, this.pnsTemplate.relayers.amount)
 
         // Set the relayers dispatchers
-        this.pnsTemplate.relayers.config.dispatchers = this.seedIps
-                                                            .concat(this.initialValIps)
-                                                            .map(function(seedIp){
-                                                                return `http://${seedIp}:8081`
-                                                            })
+        this.pnsTemplate.relayers.config.dispatchers = this.seedIps.concat(this.initialValIps).map(function (seedIp) {
+            return `http://${seedIp}:8081`
+        })
     }
 
     async initAccounts() {
         // Create seed accounts
-        for (let index = 0; index < this.pnsTemplate.seeds.amount; index++) {
-            const seedAccount = await createAccount("seed")
-            this.seedAccounts.push(seedAccount)
+        for (let index = 0; index < this.seedIps.length; index++) {
+            const seedIP = this.seedIps[index]
+            this.seedAccounts[seedIP] = []
+            for (let accountIdx = 0; accountIdx < this.pnsTemplate.seeds.processes; accountIdx++) {
+                const seedAccount = await createAccount("seed")
+                this.seedAccounts[seedIP].push(seedAccount)
+                this.accounts.push(seedAccount)
+            }
         }
 
         // Create initial validator accounts
-        for (let index = 0; index < this.pnsTemplate.initialValidators.amount; index++) {
-            const initValAccount = await createValidatorAccount(
-                "initval",
-                `http://${this.initialValIps[index]}:8081`
-            )
-            this.initialValidatorAccounts.push(initValAccount)
+        for (let index = 0; index < this.initialValIps.length; index++) {
+            const initValIp = this.initialValIps[index]
+            this.initialValidatorAccounts[initValIp] = []
+            let pocketRPCPort = 8081
+            for (let accountIdx = 0; accountIdx < this.pnsTemplate.initialValidators.processes; accountIdx++) {
+                const initValAccount = await createValidatorAccount("initval", `http://${initValIp}:${pocketRPCPort}`)
+                this.initialValidatorAccounts[initValIp].push(initValAccount)
+                this.allInitialValidatorAccounts.push(initValAccount)
+                this.accounts.push(initValAccount)
+                pocketRPCPort = pocketRPCPort + 1
+            }
         }
 
         // Create validator accounts
-        for (let index = 0; index < this.pnsTemplate.validators.amount; index++) {
-            const validatorAccount = await createValidatorAccount(
-                "validator",
-                `http://${this.initialValIps[index]}:8081`
-            )
-            this.validatorAccounts.push(validatorAccount)
+        for (let index = 0; index < this.validatorIps.length; index++) {
+            const validatorIp = this.validatorIps[index]
+            this.validatorAccounts[validatorIp] = []
+            let pocketRPCPort = 8081
+            for (let accountIdx = 0; accountIdx < this.pnsTemplate.validators.processes; accountIdx++) {
+                const validatorAccount = await createValidatorAccount(
+                    "validator",
+                    `http://${validatorIp}:${pocketRPCPort}`
+                )
+                this.validatorAccounts[validatorIp].push(validatorAccount)
+                this.accounts.push(validatorAccount)
+                pocketRPCPort = pocketRPCPort + 1
+            }
         }
 
         // Create application accounts
-        for (let index = 0; index < this.pnsTemplate.genesis.applicationsAmont; index++) {
+        for (let index = 0; index < this.pnsTemplate.genesis.applicationsAmount; index++) {
             const appAccount = await createAccount("application")
             this.applicationAccounts.push(appAccount)
         }
 
         // Create a list of all the accounts
-        this.accounts = this.seedAccounts.concat(this.initialValidatorAccounts, this.validatorAccounts, this.applicationAccounts)
-        
+        this.accounts = this.accounts.concat(
+            this.applicationAccounts
+        )
+
         // Set the relayer faucet pk
         if (this.accounts[0]) {
             this.pnsTemplate.relayers.config.faucet_pk = this.accounts[0].privateKeyHex
@@ -136,13 +158,7 @@ export class PnsConfig {
         }
     }
 
-    createGenesisValidator(
-        addressHex,
-        publicKeyHex,
-        tokenAmount,
-        serviceURL,
-        chains
-    ) {
+    createGenesisValidator(addressHex, publicKeyHex, tokenAmount, serviceURL, chains) {
         return {
             address: addressHex,
             public_key: publicKeyHex,
@@ -172,8 +188,8 @@ export class PnsConfig {
         }
 
         // Generate genesis validators
-        for (let index = 0; index < this.initialValidatorAccounts.length; index++) {
-            const validatorAccount = this.initialValidatorAccounts[index]
+        for (let index = 0; index < this.allInitialValidatorAccounts.length; index++) {
+            const validatorAccount = this.allInitialValidatorAccounts[index]
             const genesisValidator = this.createGenesisValidator(
                 validatorAccount.addressHex,
                 validatorAccount.publicKeyHex,
@@ -201,12 +217,48 @@ export class PnsConfig {
         this.genesis.app_state.application.applications = genesisApplications
     }
 
-    createConfig(moniker, seedMode, ipv4) {
-        const config = this.pnsTemplate.pocketCore.configTemplate
+    createConfig(
+        moniker,
+        seedMode,
+        ipv4,
+        numInboundPeers,
+        numOutboundPeers,
+        externalAddressPort,
+        proxyAppPort,
+        rpcListenPort,
+        pocketCoreRpcPort,
+        rootDir,
+        tendermintRpcMaxConns
+    ) {
+        const config = JSON.parse(JSON.stringify(this.pnsTemplate.pocketCore.configTemplate))
+        // Tendermint configs
         config.tendermint_config.Moniker = moniker
-        config.tendermint_config.P2P.Seeds = this.getSeeds()
+        if (seedMode === false) {
+            config.tendermint_config.P2P.Seeds = this.getSeeds()
+        } else {
+            // Don't set seeds for the seed nodes
+            config.tendermint_config.P2P.Seeds = ""
+        }
         config.tendermint_config.P2P.SeedMode = seedMode
-        config.tendermint_config.P2P.ExternalAddress = `tcp://${ipv4}:26656`
+        config.tendermint_config.P2P.ExternalAddress = `tcp://${ipv4}:${externalAddressPort}`
+        config.tendermint_config.P2P.ListenAddress = `tcp://0.0.0.0:${externalAddressPort}`
+        config.tendermint_config.P2P.MaxNumInboundPeers = numInboundPeers
+        config.tendermint_config.P2P.MaxNumOutboundPeers = numOutboundPeers
+        config.tendermint_config.ProxyApp = `tcp://127.0.0.1:${proxyAppPort}`
+        config.tendermint_config.RPC.ListenAddress = `tcp://127.0.0.1:${rpcListenPort}`
+        config.tendermint_config.RootDir = rootDir
+        config.tendermint_config.RPC.RootDir = rootDir
+        config.tendermint_config.P2P.RootDir = rootDir
+        config.tendermint_config.Mempool.RootDir = rootDir
+        config.tendermint_config.Consensus.RootDir = rootDir
+        config.tendermint_config.RPC.GRPCMaxOpenConnections = tendermintRpcMaxConns
+        config.tendermint_config.RPC.MaxOpenConnections = tendermintRpcMaxConns
+        config.tendermint_config.P2P.AllowDuplicateIP = seedMode === false ? false : true
+        // Pocket Core configs
+        config.pocket_config.tendermint_uri = `tcp://localhost:${rpcListenPort}`
+        config.pocket_config.rpc_port = pocketCoreRpcPort
+        config.pocket_config.remote_cli_url = `http://localhost:${pocketCoreRpcPort}`
+        config.pocket_config.data_dir = rootDir
         return config
     }
 
@@ -231,22 +283,27 @@ export class PnsConfig {
     }
 
     getSeeds() {
-        if (this.seedAccounts.length - this.seedIps.length !== 0) {
-            throw new Error(
-                `"Accounts ${accounts.length} vs ips ${ips.length} mismatch`
-            )
-        }
-
         const result = []
-        for (let index = 0; index < this.seedAccounts.length; index++) {
-            const account = this.seedAccounts[index]
-            const ip = this.seedIps[index]
-            result.push(`${account.addressHex}@${ip}:26656`)
+        for (let index = 0; index < this.seedIps.length; index++) {
+            const seedIP = this.seedIps[index];
+            let seedP2PPort = 26656
+            const seedAccounts = this.seedAccounts[seedIP]
+            for (let accountIdx = 0; accountIdx < seedAccounts.length; accountIdx++) {
+                const seedAccount = seedAccounts[accountIdx];
+                result.push(`${seedAccount.addressHex}@${seedIP}:${seedP2PPort}`)
+                seedP2PPort = seedP2PPort + 1000
+            }
         }
         return result.join(",")
     }
 
     setGenesisURL(genesisURL) {
         this.genesisURL = genesisURL
+    }
+
+    async createStartupScriptBucket() {
+        const storage = new GCPStorage.default.Storage()
+        const [bucket, operation] = await storage.createBucket(this.storageBucket)
+        this.startupScriptBucket = bucket
     }
 }
