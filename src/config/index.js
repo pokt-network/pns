@@ -26,9 +26,11 @@ export class PnsConfig {
 
         // Genesis
         this.genesis = PnsTemplate.pocketCore.genesisTemplate
-        
+
         // Storage bucket
         this.storageBucket = shortid.default.generate().toLowerCase()
+        // Test ID
+        this.testID = this.storageBucket
     }
 
     async init() {
@@ -59,11 +61,6 @@ export class PnsConfig {
         this.initialValIps = networkIps.splice(0, this.pnsTemplate.initialValidators.amount)
         this.validatorIps = networkIps.splice(0, this.pnsTemplate.validators.amount)
         this.relayerIps = networkIps.splice(0, this.pnsTemplate.relayers.amount)
-
-        // Set the relayers dispatchers
-        this.pnsTemplate.relayers.config.dispatchers = this.seedIps.concat(this.initialValIps).map(function (seedIp) {
-            return `http://${seedIp}:8081`
-        })
     }
 
     async initAccounts() {
@@ -115,14 +112,26 @@ export class PnsConfig {
         }
 
         // Create a list of all the accounts
-        this.accounts = this.accounts.concat(
-            this.applicationAccounts
-        )
+        this.accounts = this.accounts.concat(this.applicationAccounts)
 
         // Set the relayer faucet pk
         if (this.accounts[0]) {
             this.pnsTemplate.relayers.config.faucet_pk = this.accounts[0].privateKeyHex
         }
+
+        // Set the relayers dispatchers
+        for (let index = 0; index < this.initialValIps.length; index++) {
+            const ip = this.initialValIps[index];
+            const initialValidatorAccounts = this.initialValidatorAccounts[ip]
+            let pocketRpcPort = 8081
+            for (let accountIdx = 0; accountIdx < initialValidatorAccounts.length; accountIdx++) {
+                const initValAccount = initialValidatorAccounts[accountIdx]
+                this.pnsTemplate.relayers.config.dispatchers.push(`http://${ip}:${pocketRpcPort}`)
+                pocketRpcPort = pocketRpcPort + 1
+            }
+        }
+        this.pnsTemplate.relayers.config.dispatchers = this.shuffle(this.pnsTemplate.relayers.config.dispatchers)
+        this.pnsTemplate.relayers.config.dispatchers.splice(0, this.pnsTemplate.relayers.config.dispatchers.length/2)
     }
 
     // Genesis
@@ -233,11 +242,14 @@ export class PnsConfig {
         const config = JSON.parse(JSON.stringify(this.pnsTemplate.pocketCore.configTemplate))
         // Tendermint configs
         config.tendermint_config.Moniker = moniker
+        // if (seedMode === false) {
+        //     config.tendermint_config.P2P.Seeds = this.getSeeds()
+        // } else {
+        //     // Don't set seeds for the seed nodes
+        //     config.tendermint_config.P2P.Seeds = ""
+        // }
         if (seedMode === false) {
-            config.tendermint_config.P2P.Seeds = this.getSeeds()
-        } else {
-            // Don't set seeds for the seed nodes
-            config.tendermint_config.P2P.Seeds = ""
+            config.tendermint_config.P2P.PersistentPeers = this.getPersistentPeers(ipv4)
         }
         config.tendermint_config.P2P.SeedMode = seedMode
         config.tendermint_config.P2P.ExternalAddress = `tcp://${ipv4}:${externalAddressPort}`
@@ -253,7 +265,7 @@ export class PnsConfig {
         config.tendermint_config.Consensus.RootDir = rootDir
         config.tendermint_config.RPC.GRPCMaxOpenConnections = tendermintRpcMaxConns
         config.tendermint_config.RPC.MaxOpenConnections = tendermintRpcMaxConns
-        config.tendermint_config.P2P.AllowDuplicateIP = seedMode === false ? false : true
+        config.tendermint_config.P2P.AllowDuplicateIP = true ///seedMode === false ? false : true
         // Pocket Core configs
         config.pocket_config.tendermint_uri = `tcp://localhost:${rpcListenPort}`
         config.pocket_config.rpc_port = pocketCoreRpcPort
@@ -282,14 +294,77 @@ export class PnsConfig {
         return this.pnsTemplate.relayers.amount
     }
 
+    shuffle(array) {
+        var currentIndex = array.length,
+            temporaryValue,
+            randomIndex
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex)
+            currentIndex -= 1
+
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex]
+            array[currentIndex] = array[randomIndex]
+            array[randomIndex] = temporaryValue
+        }
+
+        return array
+    }
+
+    getPersistentPeers(nodeIp) {
+        let result = []
+        let nodeIpIndex = this.initialValIps.indexOf(nodeIp)
+        if (nodeIpIndex === -1) {
+            throw new Error(`NodeIp ${nodeIp} not found in initialValIps`)
+            //return result.join(",")
+        }
+
+        let peerIp
+        // Check if I'm the last index of the array
+        console.log(`NodeIP index ${nodeIpIndex}`)
+        if (nodeIpIndex === this.initialValIps.length - 1) {
+            peerIp = this.initialValIps[0]
+        } else {
+            peerIp = this.initialValIps[nodeIpIndex + 1]
+        }
+        console.log(`${nodeIp} peer is ${peerIp}`)
+
+        let p2pPort = 26656
+        const initValAccounts = this.initialValidatorAccounts[peerIp]
+        for (let accountIdx = 0; accountIdx < initValAccounts.length; accountIdx++) {
+            const initValAccount = initValAccounts[accountIdx]
+            result.push(`${initValAccount.addressHex}@${peerIp}:${p2pPort}`)
+            p2pPort = p2pPort + 1000
+        }
+
+        return result.join(",")
+        // const ips = this.initialValIps
+        // for (let index = 0; index < ips.length; index++) {
+        //     const peerIP = ips[index]
+        //     if (nodeIp == peerIP) {
+        //         continue
+        //     }
+        //     let p2pPort = 26656
+        //     const initValAccounts = this.initialValidatorAccounts[peerIP]
+        //     for (let accountIdx = 0; accountIdx < initValAccounts.length; accountIdx++) {
+        //         const initValAccount = initValAccounts[accountIdx]
+        //         result.push(`${initValAccount.addressHex}@${peerIP}:${p2pPort}`)
+        //         p2pPort = p2pPort + 1000
+        //     }
+        // }
+    }
+
     getSeeds() {
         const result = []
         for (let index = 0; index < this.seedIps.length; index++) {
-            const seedIP = this.seedIps[index];
+            const seedIP = this.seedIps[index]
             let seedP2PPort = 26656
             const seedAccounts = this.seedAccounts[seedIP]
             for (let accountIdx = 0; accountIdx < seedAccounts.length; accountIdx++) {
-                const seedAccount = seedAccounts[accountIdx];
+                const seedAccount = seedAccounts[accountIdx]
                 result.push(`${seedAccount.addressHex}@${seedIP}:${seedP2PPort}`)
                 seedP2PPort = seedP2PPort + 1000
             }

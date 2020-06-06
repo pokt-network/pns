@@ -32,7 +32,7 @@ git checkout ${pocketCoreBranch} -b loadtest
 go build -tags cleveldb -o /usr/local/bin/pocket ./app/cmd/pocket_core/main.go
 
 # Increase open files
-ulimit -Sn 32768
+ulimit -Sn 2048
 
 # Spawn Pocket Core processes
 ${processScriptsStr}

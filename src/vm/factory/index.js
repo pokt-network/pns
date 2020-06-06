@@ -10,7 +10,7 @@ function createVMStartupScript(startupScriptURL) {
 apt-get update
 
 # Install dependencies
-apt-get --assume-yes install expect build-essential curl file git libleveldb-dev gcc wget golang-go    
+apt-get --assume-yes install expect build-essential curl file git libleveldb-dev gcc wget
 
 # Download startup script and run it
 cd /root
@@ -53,7 +53,8 @@ export async function createSeedVM(pnsConfig, moniker, ipv4, processes) {
             moniker,
             pnsConfig.pnsTemplate.network.name,
             ipv4,
-            startupScript
+            startupScript,
+            "200"
         )
     } catch (error) {
         console.log(error)
@@ -66,7 +67,8 @@ export async function createSeedVM(pnsConfig, moniker, ipv4, processes) {
             moniker,
             pnsConfig.pnsTemplate.network.name,
             ipv4,
-            startupScript
+            startupScript,
+            "200"
         )
     }
 }
@@ -106,7 +108,8 @@ export async function createInitValVM(pnsConfig, moniker, ipv4, processes) {
             moniker,
             pnsConfig.pnsTemplate.network.name,
             ipv4,
-            startupScript
+            startupScript,
+            "200"
         )
     } catch (error) {
         console.log(error)
@@ -119,7 +122,8 @@ export async function createInitValVM(pnsConfig, moniker, ipv4, processes) {
             moniker,
             pnsConfig.pnsTemplate.network.name,
             ipv4,
-            startupScript
+            startupScript,
+            "200"
         )
     }
 }
@@ -152,7 +156,8 @@ export async function createValVM(pnsConfig, moniker, ipv4, processes) {
         moniker,
         pnsConfig.pnsTemplate.network.name,
         ipv4,
-        startupScript
+        startupScript,
+        "200"
     )
 }
 
@@ -180,7 +185,8 @@ export async function createRelayerVM(
         moniker,
         pnsConfig.pnsTemplate.network.name,
         ipv4,
-        startupScript
+        startupScript,
+        "10"
     )
 }
 

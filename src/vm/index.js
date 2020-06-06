@@ -129,6 +129,7 @@ export async function createValidatorVMs(pnsConfig) {
 }
 
 export async function createRelayerVMs(pnsConfig, monikerPrefix) {
+    const ips = pnsConfig.relayerIps
     const ipsChunks = chunk(ips, 50)
     for (let chunkIndex = 0; chunkIndex < ipsChunks.length; chunkIndex++) {
         const ipsChunk = ipsChunks[chunkIndex]

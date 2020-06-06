@@ -8,7 +8,8 @@ export default async function createVM(
     vmName,
     networkName,
     networkIP,
-    startupScript
+    startupScript,
+    diskSizeGb
 ) {
     try {
         // GCP Clients
@@ -18,7 +19,6 @@ export default async function createVM(
         // VM config
         const config = {
             machineType: machineType,
-            os: "ubuntu",
             networkInterfaces: [
                 {
                     network: `projects/${projectID}/global/networks/${networkName}`,
@@ -38,11 +38,21 @@ export default async function createVM(
                     },
                 ],
             },
+            disks: [
+                {
+                    boot: true,
+                    initializeParams: {
+                        sourceImage: `projects/ubuntu-os-cloud/global/images/ubuntu-1804-bionic-v20200529`,
+                        diskSizeGb: diskSizeGb,
+                    },
+                },
+            ],
         }
 
         // Execute operation
         if (!dryRun) {
             const vm = zone.vm(vmName)
+            console.log(vm)
             return vm.create(config)
         } else {
             return Promise.resolve()
