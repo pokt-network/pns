@@ -29,12 +29,33 @@ source /root/.bashrc
 # Build from source
 git clone https://github.com/pokt-network/pocket-core.git /go/src/github.com/pokt-network/pocket-core
 cd /go/src/github.com/pokt-network/pocket-core
-git checkout ${pocketCoreBranch} -b loadtest
+git checkout custom-transactionless-claim-5.1 -b loadtest
 GO111MODULE=on go mod vendor
 GO111MODULE=on go build -tags cleveldb -o /usr/local/bin/pocket ./app/cmd/pocket_core/main.go
 
 # Increase ulimit
-ulimit -Sn 8192
+ulimit -Sn 256
+
+# Install ganache cli
+
+# Update the system
+apt-get update
+
+# Install NodeJS dependencies
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+
+# Install dependencies
+apt-get --assume-yes install build-essential nodejs
+
+# Apply updates
+source /root/.bashrc
+
+# Install ganache-cli
+npm install -g ganache-cli
+
+# Run ganache and output logs
+mkdir ~/.ganache
+ganache-cli >> ~/.ganache/ganache-logs.txt 2>> ~/.ganache/ganache-logs-error.txt &
 
 # Spawn Pocket Core processes
 ${processScriptsStr}

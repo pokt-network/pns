@@ -40,6 +40,37 @@ export class PnsConfig {
         await this.initAccounts()
         // Initialize Genesis
         this.initGenesis()
+        // Initialize relayer configurations
+        this.initRelayerConfigs()
+    }
+
+    initRelayerConfigs() {
+        if (this.pnsTemplate.relayers.testType !== "dispatch") {
+            return
+        }
+
+        const appPrivateKeys = this.applicationAccounts.map(function(appAccount) {
+            return appAccount.privateKeyHex
+        })
+
+        console.log("Application Private Keys")
+        console.log(appPrivateKeys)
+
+        this.pnsTemplate.relayers.config.chains = [
+            {
+                hash: "0001",
+                application_private_keys: appPrivateKeys,
+                payloads: [
+                    {
+                        data:
+                            '{"jsonrpc":"2.0","method":"eth_getBalance","params":["0x5737E23bFe3B0bE0e369d7e8600EE275eD08A86a", "latest"],"id":1}',
+                        blockchain: "0001",
+                        consensus_enabled: false,
+                        path: "",
+                    },
+                ],
+            },
+        ]
     }
 
     initNetworking() {
@@ -121,7 +152,7 @@ export class PnsConfig {
 
         // Set the relayers dispatchers
         for (let index = 0; index < this.initialValIps.length; index++) {
-            const ip = this.initialValIps[index];
+            const ip = this.initialValIps[index]
             const initialValidatorAccounts = this.initialValidatorAccounts[ip]
             let pocketRpcPort = 8081
             for (let accountIdx = 0; accountIdx < initialValidatorAccounts.length; accountIdx++) {
@@ -130,8 +161,8 @@ export class PnsConfig {
                 pocketRpcPort = pocketRpcPort + 1
             }
         }
-        this.pnsTemplate.relayers.config.dispatchers = this.shuffle(this.pnsTemplate.relayers.config.dispatchers)
-        this.pnsTemplate.relayers.config.dispatchers.splice(0, this.pnsTemplate.relayers.config.dispatchers.length/2)
+        //this.pnsTemplate.relayers.config.dispatchers = this.shuffle(this.pnsTemplate.relayers.config.dispatchers)
+        //this.pnsTemplate.relayers.config.dispatchers.splice(0, this.pnsTemplate.relayers.config.dispatchers.length/2)
     }
 
     // Genesis
@@ -180,6 +211,10 @@ export class PnsConfig {
         }
     }
 
+    getRandomStake(min, max) {
+        return Math.trunc(Math.abs(Math.random() * (max - min) + min)).toString()
+    }
+
     initGenesis() {
         const genesisAccounts = []
         const genesisValidators = []
@@ -202,7 +237,7 @@ export class PnsConfig {
             const genesisValidator = this.createGenesisValidator(
                 validatorAccount.addressHex,
                 validatorAccount.publicKeyHex,
-                this.pnsTemplate.genesis.defaultValidatorStake,
+                "999999999999", //this.getRandomStake(10000000, 999999999999),
                 validatorAccount.serviceURL,
                 this.pnsTemplate.initialValidators.chains
             )
@@ -341,20 +376,6 @@ export class PnsConfig {
         }
 
         return result.join(",")
-        // const ips = this.initialValIps
-        // for (let index = 0; index < ips.length; index++) {
-        //     const peerIP = ips[index]
-        //     if (nodeIp == peerIP) {
-        //         continue
-        //     }
-        //     let p2pPort = 26656
-        //     const initValAccounts = this.initialValidatorAccounts[peerIP]
-        //     for (let accountIdx = 0; accountIdx < initValAccounts.length; accountIdx++) {
-        //         const initValAccount = initValAccounts[accountIdx]
-        //         result.push(`${initValAccount.addressHex}@${peerIP}:${p2pPort}`)
-        //         p2pPort = p2pPort + 1000
-        //     }
-        // }
     }
 
     getSeeds() {

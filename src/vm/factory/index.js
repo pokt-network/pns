@@ -54,7 +54,7 @@ export async function createSeedVM(pnsConfig, moniker, ipv4, processes) {
             pnsConfig.pnsTemplate.network.name,
             ipv4,
             startupScript,
-            "200"
+            "20"
         )
     } catch (error) {
         console.log(error)
@@ -68,7 +68,7 @@ export async function createSeedVM(pnsConfig, moniker, ipv4, processes) {
             pnsConfig.pnsTemplate.network.name,
             ipv4,
             startupScript,
-            "200"
+            "20"
         )
     }
 }
@@ -109,7 +109,7 @@ export async function createInitValVM(pnsConfig, moniker, ipv4, processes) {
             pnsConfig.pnsTemplate.network.name,
             ipv4,
             startupScript,
-            "200"
+            pnsConfig.pnsTemplate.initialValidators.diskSizeGb
         )
     } catch (error) {
         console.log(error)
@@ -123,7 +123,7 @@ export async function createInitValVM(pnsConfig, moniker, ipv4, processes) {
             pnsConfig.pnsTemplate.network.name,
             ipv4,
             startupScript,
-            "200"
+            pnsConfig.pnsTemplate.initialValidators.diskSizeGb
         )
     }
 }
@@ -186,7 +186,7 @@ export async function createRelayerVM(
         pnsConfig.pnsTemplate.network.name,
         ipv4,
         startupScript,
-        "10"
+        pnsConfig.pnsTemplate.relayers.diskSizeGb
     )
 }
 

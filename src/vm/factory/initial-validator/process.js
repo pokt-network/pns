@@ -23,7 +23,7 @@ wget --output-document genesis.json ${genesisURL}
 echo '${JSON.stringify(configJSON)}' > ${rootDir}/config/config.json
 
 # Create chains.json
-echo '[]' > ${rootDir}/config/chains.json
+echo '[{"id":"0001", "url":"http://localhost:8545"}]' > ${rootDir}/config/chains.json
 
 # Run pocket core via expect
 expect -c '

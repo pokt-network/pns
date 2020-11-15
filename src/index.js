@@ -59,7 +59,7 @@ async function start() {
     // Create validators and wait
     await VM.createValidatorVMs(pnsConfig)
     // Await before the next execution
-    //await new Promise((r) => setTimeout(r, 30000))
+    await new Promise((r) => setTimeout(r, 1200000))
 
     // Create relayers
     await VM.createRelayerVMs(pnsConfig, "relayer")
