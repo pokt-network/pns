@@ -41,9 +41,10 @@ export default async function createVM(
             disks: [
                 {
                     boot: true,
+                    autoDelete: true,
                     initializeParams: {
                         sourceImage: `projects/ubuntu-os-cloud/global/images/ubuntu-1804-bionic-v20200529`,
-                        diskSizeGb: diskSizeGb,
+                        diskSizeGb: diskSizeGb
                     },
                 },
             ],

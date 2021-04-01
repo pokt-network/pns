@@ -6,6 +6,17 @@ export default function(
 var processScriptsStr = processScripts.join("\n")
 
     return `#! /bin/bash
+# Install Monitoring Stack Driver Agent
+mkdir /etc/google
+mkdir /etc/google/auth
+wget -O /etc/google/auth/application_default_credentials.json https://storage.googleapis.com/monitoring-writer/Validator%20Load%20Test-82047bba1023.json
+curl -sSO https://dl.google.com/cloudagents/add-monitoring-agent-repo.sh
+sudo bash add-monitoring-agent-repo.sh
+sudo apt-get update
+sudo apt-get install -y 'stackdriver-agent=6.*'
+sudo service stackdriver-agent start
+sudo service stackdriver-agent status
+
 # Install go
 wget -q -O - https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh \
 | bash -s -- --version 1.13.2

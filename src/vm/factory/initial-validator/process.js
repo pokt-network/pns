@@ -27,7 +27,6 @@ echo '[{"id":"0001", "url":"http://localhost:8545"}]' > ${rootDir}/config/chains
 
 # Run pocket core via expect
 expect -c '
-
 # Import account
 spawn pocket --datadir ${rootDir} accounts import-raw ${account.privateKeyHex}
 sleep 1

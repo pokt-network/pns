@@ -283,9 +283,10 @@ export class PnsConfig {
         //     // Don't set seeds for the seed nodes
         //     config.tendermint_config.P2P.Seeds = ""
         // }
-        if (seedMode === false) {
-            config.tendermint_config.P2P.PersistentPeers = this.getPersistentPeers(ipv4)
-        }
+        // if (seedMode === false) {
+        //     config.tendermint_config.P2P.PersistentPeers = this.getPersistentPeers(ipv4)
+        // }
+        config.tendermint_config.P2P.Seeds = this.getSeeds() 
         config.tendermint_config.P2P.SeedMode = seedMode
         config.tendermint_config.P2P.ExternalAddress = `tcp://${ipv4}:${externalAddressPort}`
         config.tendermint_config.P2P.ListenAddress = `tcp://0.0.0.0:${externalAddressPort}`
@@ -306,6 +307,7 @@ export class PnsConfig {
         config.pocket_config.rpc_port = pocketCoreRpcPort
         config.pocket_config.remote_cli_url = `http://localhost:${pocketCoreRpcPort}`
         config.pocket_config.data_dir = rootDir
+        config.pocket_config.pocket_prometheus_port = (pocketCoreRpcPort * 2).toString()
         return config
     }
 
@@ -368,7 +370,19 @@ export class PnsConfig {
         console.log(`${nodeIp} peer is ${peerIp}`)
 
         let p2pPort = 26656
-        const initValAccounts = this.initialValidatorAccounts[peerIp]
+        let initValAccounts = this.initialValidatorAccounts[peerIp]
+        for (let accountIdx = 0; accountIdx < initValAccounts.length; accountIdx++) {
+            const initValAccount = initValAccounts[accountIdx]
+            result.push(`${initValAccount.addressHex}@${peerIp}:${p2pPort}`)
+            p2pPort = p2pPort + 1000
+        }
+
+        // Get another random instance and repeat the process
+        peerIp = this.initialValIps[Math.floor(Math.random() * this.initialValIps.length)]
+        console.log(`${nodeIp} secondary peer is ${peerIp}`)
+
+        p2pPort = 26656
+        initValAccounts = this.initialValidatorAccounts[peerIp]
         for (let accountIdx = 0; accountIdx < initValAccounts.length; accountIdx++) {
             const initValAccount = initValAccounts[accountIdx]
             result.push(`${initValAccount.addressHex}@${peerIp}:${p2pPort}`)
@@ -390,6 +404,7 @@ export class PnsConfig {
                 seedP2PPort = seedP2PPort + 1000
             }
         }
+        console.log("Seeds: " + result.join(","))
         return result.join(",")
     }
 
@@ -398,7 +413,10 @@ export class PnsConfig {
     }
 
     async createStartupScriptBucket() {
-        const storage = new GCPStorage.default.Storage()
+        const storage = new GCPStorage.default.Storage({
+            projectId: this.pnsTemplate.projectID,
+            keyFilename: "/Users/luyzdeleon/validator-load-test-creds.json"
+        })
         const [bucket, operation] = await storage.createBucket(this.storageBucket)
         this.startupScriptBucket = bucket
     }

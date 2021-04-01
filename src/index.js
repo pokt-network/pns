@@ -30,7 +30,7 @@ async function uploadGenesisFile(pnsConfig, genesisJsonStr) {
         expires: "03-17-2025",
     }
     const fileURL = await file.getSignedUrl(config)
-    pnsConfig.setGenesisURL(fileURL)
+    pnsConfig.setGenesisURL(fileURL[0])
 }
 
 async function start() {
@@ -49,7 +49,7 @@ async function start() {
     // Create seeds and wait
     await VM.createSeedVMs(pnsConfig)
     // Await before the next execution
-    //await new Promise((r) => setTimeout(r, 30000))
+    await new Promise((r) => setTimeout(r, 90000))
 
     // Create initial validators and wait
     await VM.createInitValVMs(pnsConfig)
@@ -57,13 +57,23 @@ async function start() {
     //await new Promise((r) => setTimeout(r, 30000))
 
     // Create validators and wait
-    await VM.createValidatorVMs(pnsConfig)
+    // await VM.createValidatorVMs(pnsConfig)
     // Await before the next execution
-    await new Promise((r) => setTimeout(r, 1200000))
+    await new Promise((r) => setTimeout(r, 900000))
 
     // Create relayers
-    await VM.createRelayerVMs(pnsConfig, "relayer")
+    const operationResults = await VM.createRelayerVMs(pnsConfig, "relayer")
     console.log(`Test setup finished at: ${new Date()}`)
+
+    let script = ``
+    for (let index = 0; index < operationResults.length; index++) {
+        let operationResult = operationResults[index]
+        let vm = operationResult[0]
+        script = `${script}gcloud compute ssh luis_pokt_network@${vm.id} --zone="us-central1-c" --command="export PATH="$PATH:/snap/bin" && gcloud auth activate-service-account --key-file=/etc/google/auth/application_default_credentials.json && forever stopall && zip -r /home/luis_pokt_network/${vm.id}.zip /home/luis_pokt_network/prlts_data/**/analytics/data.json && gsutil -m cp -r /home/luis_pokt_network/${vm.id}.zip gs://prtls-results"
+        `
+    }
+    console.log("PRLTS Data Dump Script:")
+    console.log(script)
 }
 
 // Start PNS

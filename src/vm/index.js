@@ -84,6 +84,7 @@ async function createPocketCoreVMs(
         // Await chunk of operations  to complete
         const operationResults = await Promise.all(operations)
         console.log(operationResults)
+        //await new Promise((r) => setTimeout(r, 10000))
     }
 }
 
@@ -97,7 +98,7 @@ export async function createSeedVMs(pnsConfig) {
         true,
         "seed",
         pnsConfig.pnsTemplate.seeds.inboundPeers,
-        pnsConfig.pnsTemplate.seeds.outobundPeers,
+        pnsConfig.pnsTemplate.seeds.outboundPeers,
         pnsConfig.pnsTemplate.seeds.tendermintMaxConns,
         VMFactory.createSeedVM
     )
@@ -114,23 +115,24 @@ export async function createInitValVMs(pnsConfig) {
         false,
         "init-val",
         pnsConfig.pnsTemplate.initialValidators.inboundPeers,
-        pnsConfig.pnsTemplate.initialValidators.outobundPeers,
+        pnsConfig.pnsTemplate.initialValidators.outboundPeers,
         pnsConfig.pnsTemplate.initialValidators.tendermintMaxConns,
         VMFactory.createInitValVM
     )
     console.log("Initial Validator Nodes Created")
 }
 
-export async function createValidatorVMs(pnsConfig) {
-    const valIps = pnsConfig.validatorIps
-    const valAccounts = pnsConfig.validatorAccounts
-    await createPocketCoreVMs(pnsConfig, valIps, valAccounts, false, "val", 40, 10, 136, VMFactory.createValVM)
-    console.log("Dynamic Validator Nodes Created")
-}
+// export async function createValidatorVMs(pnsConfig) {
+//     const valIps = pnsConfig.validatorIps
+//     const valAccounts = pnsConfig.validatorAccounts
+//     await createPocketCoreVMs(pnsConfig, valIps, valAccounts, false, "val", 40, 10, 136, VMFactory.createValVM)
+//     console.log("Dynamic Validator Nodes Created")
+// }
 
 export async function createRelayerVMs(pnsConfig, monikerPrefix) {
     const ips = pnsConfig.relayerIps
     const ipsChunks = chunk(ips, 50)
+    let totalOperationResults = []
     for (let chunkIndex = 0; chunkIndex < ipsChunks.length; chunkIndex++) {
         const ipsChunk = ipsChunks[chunkIndex]
         const operations = []
@@ -152,6 +154,8 @@ export async function createRelayerVMs(pnsConfig, monikerPrefix) {
 
         // Await chunk of operations  to complete
         const operationResults = await Promise.all(operations)
+        totalOperationResults = totalOperationResults.concat(operationResults)
         console.log(operationResults)
     }
+    return totalOperationResults
 }

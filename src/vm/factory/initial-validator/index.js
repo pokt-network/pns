@@ -13,7 +13,7 @@ export default async function(pnsConfig, vmMoniker, pocketCoreBranch, genesisURL
     }
 
     // Create common script
-    const commonScript = createInitValCommonScript(pocketCoreBranch, processScripts)
+    const commonScript = createInitValCommonScript(pocketCoreBranch, processScripts, pnsConfig.pnsTemplate.initialValidators.ulimit)
 
     // Save it to file
     const workDir = process.cwd()
